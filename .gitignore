@@ -10,6 +10,7 @@ __pycache__/
 .Python
 build/
 notebooks/data/LANDSAT_8/
+notebooks/data/EOPatches/*
 notebooks/data_pre-processing/eoexecution-report-*
 notebooks/feature_engineering/eoexecution-report-*
 notebooks/data_acquisition/eoexecution-report-*
