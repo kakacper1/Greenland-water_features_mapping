@@ -1,8 +1,8 @@
 import os
 import geopandas as gpd
 from sentinelhub import CRS, BBox
-
-
+from os import listdir
+from os.path import isdir, join
 
 def get_year(date_string):
     """Date input format: '2017-03-01' YYYY-MM-DD """
@@ -62,3 +62,8 @@ def get_eopatches_dir(data_product, site_name, crs, date_range ):
     date_range_string = '{0}_{1}-{2}_{3}'.format(get_year(date_range[0]),get_month(date_range[0]),get_year(date_range[1]),get_month(date_range[1]))
     filepath = '../../data/EOPatches/{0}/{1}/{2}/{3}/'.format(data_product,site_name,crs.name, date_range_string)
     return filepath
+
+def get_list_of_eopatches(filepath ):
+    """Return list of folders names in requested directory"""
+    onlyfiles = [f for f in listdir(filepath) if isdir(join(filepath, f))]
+    return onlyfiles
