@@ -79,3 +79,11 @@ def plot_timeless_mask_LANDSAT_8(eopatch, band_idx, mask_acces_name='DEM_RAW_LAY
     del eopatch
     return
 
+def plot_RGB_MODIS_image(eo_patch, data_acces_name, datetime_idx, red_idx=0 , green_idx=3, blue_idx=2  ):
+    """Display MODIS RGB picture accordingly to the specified date and band indexes"""
+    fig = plt.figure(figsize=(10, 10))
+    print(eo_patch.timestamp[datetime_idx])
+    plt.imshow(eo_patch.data[data_acces_name][datetime_idx][..., [red_idx, green_idx, blue_idx]].squeeze())
+    plt.xticks([])
+    plt.yticks([])
+    return
