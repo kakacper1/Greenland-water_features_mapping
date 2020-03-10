@@ -3,6 +3,7 @@ from sentinelhub import CRS, BBox
 import os
 import numpy as np
 import geopandas as gpd
+from scipy import ndimage
 
 def display_greenland_with_tiles(gdf, crs_zone, display_indexes=False):
     """Display greeenland borders with selected tiles with indexes"""
@@ -41,41 +42,70 @@ def display_greenland_with_tiles(gdf, crs_zone, display_indexes=False):
     return
 
 
-def plot_RGB_LANDSAT_8_image(eopatch, data_acces_name='LANDSAT_RAW_BANDS' ,datetime_idx=0, red_id=4, green_id=3, blue_id=2  ):
-    
-    fig = plt.figure(figsize=(20, 20))
-
+def plot_RGB_LANDSAT_8_image(eopatch, data_acces_name='LANDSAT_RAW_BANDS' ,datetime_idx=0, red_id=4, green_id=3, blue_id=2, save=False):
     print(eopatch.timestamp[datetime_idx])
+    print('Ploting...')
+    fig = plt.figure(figsize=(20, 20))
     plt.imshow(np.clip(eopatch.data[data_acces_name][datetime_idx][..., [red_id, green_id, blue_id]] * 3.5, 0, 1))
-    plt.xticks([])
-    plt.yticks([])
+    if save:
+        image_name ='{0}_{1}_{2}_{3}.png'.format(eopatch.meta_info['patch_index'], eopatch.meta_info['time_interval'][0][:4],datetime_idx,data_acces_name)
+        plt.savefig(image_name)
+        print('Saved:', image_name )
     del eopatch
     return
 
-def plot_single_band_LANDSAT_8(eopatch, band_idx, data_acces_name='LANDSAT_RAW_BANDS' ,datetime_idx =0 ):
-    fig = plt.figure(figsize=(10, 10)) 
+def plot_single_band_LANDSAT_8(eopatch, data_acces_name='LANDSAT_RAW_BANDS', band_idx=0, datetime_idx=0, save=False):
     print(eopatch.timestamp[datetime_idx])
+    fig = plt.figure(figsize=(10, 10)) 
     plt.imshow(eopatch.data[data_acces_name][datetime_idx][..., band_idx].squeeze())
     plt.xticks([])
     plt.yticks([])
+    if save:
+        image_name ='{0}_{1}_{2}_{3}.png'.format(eopatch.meta_info['patch_index'], eopatch.meta_info['time_interval'][0][:4],datetime_idx,data_acces_name)
+        plt.savefig(image_name)
+        print('Saved:', image_name )
     del eopatch
     return
 
-def plot_qa_mask_LANDSAT_8(eopatch, band_idx, mask_acces_name='LANDSAT_QA_LAYERS', datetime_idx =0 ):
-    fig = plt.figure(figsize=(10, 10)) 
+def plot_single_mask_LANDSAT_8(eopatch, data_acces_name='LANDSAT_RAW_BANDS', band_idx=0, datetime_idx=0, save=False):
     print(eopatch.timestamp[datetime_idx])
-    plt.imshow(eopatch.data[mask_acces_name][datetime_idx][..., band_idx].squeeze())
+    fig = plt.figure(figsize=(10, 10)) 
+    plt.imshow(eopatch.mask[data_acces_name][datetime_idx][..., band_idx].squeeze())
     plt.xticks([])
     plt.yticks([])
+    if save:
+        image_name ='{0}_{1}_{2}_{3}.png'.format(eopatch.meta_info['patch_index'], eopatch.meta_info['time_interval'][0][:4],datetime_idx,data_acces_name)
+        plt.savefig(image_name)
+        print('Saved:', image_name )
     del eopatch
     return
 
+#def plot_qa_mask_LANDSAT_8(eopatch, band_idx, mask_acces_name='LANDSAT_QA_LAYERS', datetime_idx =0, dilation=0 ):
+#    fig = plt.figure(figsize=(10, 10)) 
+#    print(eopatch.timestamp[datetime_idx])
+#    
+#    if dilation != 0:
+#        dilated_mask = ndimage.binary_dilation(eopatch.data[mask_acces_name][datetime_idx][..., band_idx].squeeze(), iterations=dilation) 
+#    print('Mask dilated: ', dilation, 'times.')
+#    
+#    dilated_mask()
+#    plt.imshow()
+#    plt.xticks([])
+#    plt.yticks([])
+#    del eopatch
+#    return
 
-def plot_timeless_mask_LANDSAT_8(eopatch, band_idx, mask_acces_name='DEM_RAW_LAYER' ):
+
+def plot_timeless_mask_LANDSAT_8(eopatch, band_idx, mask_acces_name='DEM_RAW_LAYER', save=False ):
+    print(eopatch.timestamp[datetime_idx])
     fig = plt.figure(figsize=(10, 10)) 
     plt.imshow(eopatch.data_timeless[mask_acces_name][..., band_idx].squeeze())
     plt.xticks([])
     plt.yticks([])
+    if save:
+        image_name ='{0}_{1}_{2}_{3}.png'.format(eopatch.meta_info['patch_index'], eopatch.meta_info['time_interval'][0][:4],datetime_idx,data_acces_name)
+        plt.savefig(image_name)
+        print('Saved:', image_name )
     del eopatch
     return
 
@@ -86,4 +116,18 @@ def plot_RGB_MODIS_image(eo_patch, data_acces_name, datetime_idx, red_idx=0 , gr
     plt.imshow(eo_patch.data[data_acces_name][datetime_idx][..., [red_idx, green_idx, blue_idx]].squeeze())
     plt.xticks([])
     plt.yticks([])
+    return
+
+def plot_qa_mask_LANDSAT_8(eopatch, band_idx, mask_acces_name='LANDSAT_QA_LAYERS', datetime_idx =0, dilation=0 ):
+    fig = plt.figure(figsize=(10, 10)) 
+    print(eopatch.timestamp[datetime_idx])
+    binary_mask = eopatch.data[mask_acces_name][datetime_idx][..., band_idx].squeeze().round().astype(bool)
+    if dilation != 0:
+        binary_mask = ndimage.binary_dilation(binary_mask, iterations=dilation) 
+        print('Mask dilated: ', dilation, 'times.')
+    
+    plt.imshow(binary_mask)
+    plt.xticks([])
+    plt.yticks([])
+    del eopatch
     return
