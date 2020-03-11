@@ -13,9 +13,14 @@ build/
 notebooks/data/LANDSAT_8/
 data/EOPatches/*
 notebooks/data_pre-processing/eoexecution-report-*
+notebooks/1_data_acquisition/eoexecution-report-*
+notebooks/2_data_pre-processing/eoexecution-report-*
+notebooks/3_data_mining/eoexecution-report-*
+notebooks/4_model_training/eoexecution-report-*
 notebooks/feature_engineering/eoexecution-report-*
 notebooks/data_acquisition/eoexecution-report-*
 notebooks/data_acquisition/account/kamil9422_sentinel_hub_account.py
+notebooks/3_data_mining/plots/*
 data/utm_tile_division/*
 
 notebooks/data/MODIS/

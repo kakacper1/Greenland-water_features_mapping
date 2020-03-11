@@ -5,6 +5,13 @@ import numpy as np
 import geopandas as gpd
 from scipy import ndimage
 
+def plot_matrix(eopatch_dem):
+    fig = plt.figure(figsize=(10, 10)) 
+    plt.imshow(eopatch_dem.squeeze())
+    plt.xticks([])
+    plt.yticks([])
+    return
+
 def display_greenland_with_tiles(gdf, crs_zone, display_indexes=False):
     """Display greeenland borders with selected tiles with indexes"""
     
@@ -42,19 +49,19 @@ def display_greenland_with_tiles(gdf, crs_zone, display_indexes=False):
     return
 
 
-def plot_RGB_LANDSAT_8_image(eopatch, data_acces_name='LANDSAT_RAW_BANDS' ,datetime_idx=0, red_id=4, green_id=3, blue_id=2, save=False):
+def plot_RGB_LANDSAT_8_image(eopatch, data_acces_name='LANDSAT_RAW_BANDS' ,datetime_idx=0, red_id=4, green_id=3, blue_id=2, save=False, plot_folder='plots'):
     print(eopatch.timestamp[datetime_idx])
     print('Ploting...')
     fig = plt.figure(figsize=(20, 20))
     plt.imshow(np.clip(eopatch.data[data_acces_name][datetime_idx][..., [red_id, green_id, blue_id]] * 3.5, 0, 1))
     if save:
         image_name ='{0}_{1}_{2}_{3}.png'.format(eopatch.meta_info['patch_index'], eopatch.meta_info['time_interval'][0][:4],datetime_idx,data_acces_name)
-        plt.savefig(image_name)
+        plt.savefig(plot_folder+image_name)
         print('Saved:', image_name )
     del eopatch
     return
 
-def plot_single_band_LANDSAT_8(eopatch, data_acces_name='LANDSAT_RAW_BANDS', band_idx=0, datetime_idx=0, save=False):
+def plot_single_band_LANDSAT_8(eopatch, data_acces_name='LANDSAT_RAW_BANDS', band_idx=0, datetime_idx=0, save=False, plot_folder='plots'):
     print(eopatch.timestamp[datetime_idx])
     fig = plt.figure(figsize=(10, 10)) 
     plt.imshow(eopatch.data[data_acces_name][datetime_idx][..., band_idx].squeeze())
@@ -62,12 +69,12 @@ def plot_single_band_LANDSAT_8(eopatch, data_acces_name='LANDSAT_RAW_BANDS', ban
     plt.yticks([])
     if save:
         image_name ='{0}_{1}_{2}_{3}.png'.format(eopatch.meta_info['patch_index'], eopatch.meta_info['time_interval'][0][:4],datetime_idx,data_acces_name)
-        plt.savefig(image_name)
+        plt.savefig(plot_folder+image_name)
         print('Saved:', image_name )
     del eopatch
     return
 
-def plot_single_mask_LANDSAT_8(eopatch, data_acces_name='LANDSAT_RAW_BANDS', band_idx=0, datetime_idx=0, save=False):
+def plot_single_mask_LANDSAT_8(eopatch, data_acces_name='LANDSAT_RAW_BANDS', band_idx=0, datetime_idx=0, save=False, plot_folder='plots'):
     print(eopatch.timestamp[datetime_idx])
     fig = plt.figure(figsize=(10, 10)) 
     plt.imshow(eopatch.mask[data_acces_name][datetime_idx][..., band_idx].squeeze())
@@ -75,7 +82,7 @@ def plot_single_mask_LANDSAT_8(eopatch, data_acces_name='LANDSAT_RAW_BANDS', ban
     plt.yticks([])
     if save:
         image_name ='{0}_{1}_{2}_{3}.png'.format(eopatch.meta_info['patch_index'], eopatch.meta_info['time_interval'][0][:4],datetime_idx,data_acces_name)
-        plt.savefig(image_name)
+        plt.savefig(plot_folder+image_name)
         print('Saved:', image_name )
     del eopatch
     return
@@ -96,16 +103,29 @@ def plot_single_mask_LANDSAT_8(eopatch, data_acces_name='LANDSAT_RAW_BANDS', ban
 #    return
 
 
-def plot_timeless_mask_LANDSAT_8(eopatch, band_idx, mask_acces_name='DEM_RAW_LAYER', save=False ):
-    print(eopatch.timestamp[datetime_idx])
+def plot_timeless_mask_LANDSAT_8(eopatch, band_idx, mask_acces_name='DEM_RAW_LAYER', save=False, plot_folder='plots' ):
     fig = plt.figure(figsize=(10, 10)) 
-    plt.imshow(eopatch.data_timeless[mask_acces_name][..., band_idx].squeeze())
+    plt.imshow(eopatch.mask_timeless[mask_acces_name][..., band_idx].squeeze())
     plt.xticks([])
     plt.yticks([])
     if save:
-        image_name ='{0}_{1}_{2}_{3}.png'.format(eopatch.meta_info['patch_index'], eopatch.meta_info['time_interval'][0][:4],datetime_idx,data_acces_name)
-        plt.savefig(image_name)
-        print('Saved:', image_name )
+        image_name ='{0}_{1}_{2}.png'.format(eopatch.meta_info['patch_index'], eopatch.meta_info['time_interval'][0][:4],mask_acces_name)
+        plt.savefig(plot_folder+image_name)
+        print('Saved:', plot_folder+image_name )
+    del eopatch
+    return
+
+def plot_timeless_mask_LANDSAT_8_max_min_val(eopatch, band_idx, mask_acces_name='DEM_RAW_LAYER', save=False, plot_folder='plots', cmap=plt.cm.viridis ):
+    vmin, vmax = None, None
+    data = eopatch.mask_timeless[mask_acces_name][..., band_idx].squeeze()
+    vmin = np.min(data) if vmin is None else (np.min(data) if np.min(data) < vmin else vmin)
+    vmax = np.max(data) if vmax is None else (np.max(data) if np.max(data) > vmax else vmax)
+    fig = plt.figure(figsize=(10, 10)) 
+    plt.imshow(data, vmin=vmin, vmax=vmax, cmap=cmap)
+    if save:
+        image_name ='{0}_{1}_{2}.png'.format(eopatch.meta_info['patch_index'], eopatch.meta_info['time_interval'][0][:4],mask_acces_name)
+        plt.savefig(plot_folder+image_name)
+        print('Saved:', plot_folder+image_name )
     del eopatch
     return
 
