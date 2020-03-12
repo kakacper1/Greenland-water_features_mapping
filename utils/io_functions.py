@@ -3,6 +3,8 @@ import geopandas as gpd
 from sentinelhub import CRS, BBox
 from os import listdir
 from os.path import isdir, join
+from eolearn.core import EOPatch
+import random
 
 def get_year(date_string):
     """Date input format: '2017-03-01' YYYY-MM-DD """
@@ -58,12 +60,34 @@ def load_selected_tiles_from_file(site_name, crs_zone, tile_size_in_km=10 ):
         return 
     return gpd.read_file(shapefile_filepath)
 
-def get_eopatches_dir(data_product, site_name, crs, date_range ):
+def get_eopatches_dir(data_product='LANDSAT_8', site_name='UPE_PROMICE', crs=CRS.UTM_22N, date_range=('2013-05-01', '2013-10-31') ):
     date_range_string = '{0}_{1}-{2}_{3}'.format(get_year(date_range[0]),get_month(date_range[0]),get_year(date_range[1]),get_month(date_range[1]))
     filepath = '../../data/EOPatches/{0}/{1}/{2}/{3}/'.format(data_product,site_name,crs.name, date_range_string)
     return filepath
 
-def get_list_of_eopatches(filepath ):
+def get_list_of_eopatches(filepath):
     """Return list of folders names in requested directory"""
     onlyfiles = [f for f in listdir(filepath) if isdir(join(filepath, f))]
     return onlyfiles
+
+def load_exemplary_eopatch( date_range = ('2013-05-01', '2013-10-31'), patch_id = 5, random_choice=True ):
+    eo_patch_dir = get_eopatches_dir(date_range=date_range)
+    list_of_eo_patches = get_list_of_eopatches(eo_patch_dir)
+    
+    if list_of_eo_patches == 0:
+        print('No patches found')
+        return
+    if random_choice == True:
+        eo_patch_filename = random.choice(list_of_eo_patches)
+    else:
+        if patch_id < len(list_of_eo_patches):
+            eo_patch_filename = list_of_eo_patches[patch_id]
+        else:
+            print('Index out of range')
+            return
+    final_eopatch_filepath = eo_patch_dir+eo_patch_filename
+    print('Loaded from', final_eopatch_filepath)
+    return EOPatch.load(final_eopatch_filepath)
+       
+        
+    
