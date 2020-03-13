@@ -22,7 +22,8 @@ notebooks/data_acquisition/eoexecution-report-*
 notebooks/data_acquisition/account/kamil9422_sentinel_hub_account.py
 notebooks/3_data_mining/plots/*
 data/utm_tile_division/*
-
+*.dat
+*.pkl
 notebooks/data/MODIS/
 develop-eggs/
 dist/

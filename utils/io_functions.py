@@ -6,6 +6,18 @@ from os.path import isdir, join
 from eolearn.core import EOPatch
 import random
 
+
+def chunkIt(seq, num):
+    avg = len(seq) / float(num)
+    out = []
+    last = 0.0
+
+    while last < len(seq):
+        out.append(seq[int(last):int(last + avg)])
+        last += avg
+
+    return out
+
 def get_year(date_string):
     """Date input format: '2017-03-01' YYYY-MM-DD """
     return  str(date_string[:4])
@@ -70,8 +82,8 @@ def get_list_of_eopatches(filepath):
     onlyfiles = [f for f in listdir(filepath) if isdir(join(filepath, f))]
     return onlyfiles
 
-def load_exemplary_eopatch( date_range = ('2013-05-01', '2013-10-31'), patch_id = 5, random_choice=True ):
-    eo_patch_dir = get_eopatches_dir(date_range=date_range)
+def load_exemplary_eopatch(data_product='LANDSAT_8', date_range = ('2013-05-01', '2013-10-31'), patch_id = 5, random_choice=True ):
+    eo_patch_dir = get_eopatches_dir(data_product=data_product, date_range=date_range)
     list_of_eo_patches = get_list_of_eopatches(eo_patch_dir)
     
     if list_of_eo_patches == 0:
@@ -88,6 +100,31 @@ def load_exemplary_eopatch( date_range = ('2013-05-01', '2013-10-31'), patch_id 
     final_eopatch_filepath = eo_patch_dir+eo_patch_filename
     print('Loaded from', final_eopatch_filepath)
     return EOPatch.load(final_eopatch_filepath)
+
+
+
+def load_exemplary_MODIS_eopatch(data_product='MODIS', date_range = ('2013-04-26', '2013-11-05'), patch_id = 5, random_choice=True ):
+    eo_patch_dir = get_eopatches_dir(data_product=data_product , date_range=date_range)
+    list_of_eo_patches = get_list_of_eopatches(eo_patch_dir)
+    
+    if list_of_eo_patches == 0:
+        print('No patches found')
+        return
+    if random_choice == True:
+        eo_patch_filename = random.choice(list_of_eo_patches)
+    else:
+        if patch_id < len(list_of_eo_patches):
+            eo_patch_filename = list_of_eo_patches[patch_id]
+        else:
+            print('Index out of range')
+            return
+    final_eopatch_filepath = eo_patch_dir+eo_patch_filename
+    print('Loaded from', final_eopatch_filepath)
+    return EOPatch.load(final_eopatch_filepath)
+
+
+
+
        
         
     
