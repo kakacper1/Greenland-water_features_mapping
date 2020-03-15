@@ -24,6 +24,8 @@ notebooks/3_data_mining/plots/*
 data/utm_tile_division/*
 *.dat
 *.pkl
+*.pickle
+*.xlsx
 notebooks/data/MODIS/
 develop-eggs/
 dist/

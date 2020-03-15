@@ -151,3 +151,34 @@ def plot_qa_mask_LANDSAT_8(eopatch, band_idx, mask_acces_name='LANDSAT_QA_LAYERS
     plt.yticks([])
     del eopatch
     return
+
+def plot_RGB_MODIS_image(eopatch, data_acces_name='MODIS_RAW_BANDS' ,datetime_idx=0, red_id=0, green_id=3, blue_id=2, save=False, plot_folder='plots'):
+    print(eopatch.timestamp[datetime_idx])
+    print('Ploting...')
+    fig = plt.figure(figsize=(10, 10))
+    plt.imshow(np.clip(eopatch.data[data_acces_name][datetime_idx][..., [red_id, green_id, blue_id]], 0, 1))
+    if save:
+        image_name ='{0}_{1}_{2}_{3}.png'.format(eopatch.meta_info['patch_index'], eopatch.meta_info['time_interval'][0][:4],datetime_idx,data_acces_name)
+        plt.savefig(plot_folder+image_name)
+        print('Saved:', image_name )
+    del eopatch
+    return
+
+def plot_all_bands_in_data_acces_name(eopatch, data_acces_name='LANDSAT_RAW_BANDS', datetime_idx=0, save=False, plot_folder='plots'):
+    print(eopatch.timestamp[datetime_idx])
+    
+    data_one_day = eopatch.data[data_acces_name][datetime_idx]#
+    total_bands_no = data_one_day.shape[2]
+    
+    for band_idx in range(total_bands_no):
+        fig = plt.figure(figsize=(10, 10)) 
+        print('Band:', band_idx )
+        data_single_band = data_one_day[..., band_idx].squeeze()
+        plt.imshow(data_single_band)
+        
+    if save:
+        image_name ='{0}_{1}_{2}_{3}.png'.format(eopatch.meta_info['patch_index'], eopatch.meta_info['time_interval'][0][:4],datetime_idx,data_acces_name)
+        plt.savefig(plot_folder+image_name)
+        print('Saved:', image_name )
+    del eopatch
+    return

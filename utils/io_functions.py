@@ -124,7 +124,21 @@ def load_exemplary_MODIS_eopatch(data_product='MODIS', date_range = ('2013-04-26
 
 
 
-
+def load_exemplary_eopatch_from_file(file , patch_id=6, random_choice=True ):
+    list_of_eo_patches = get_list_of_eopatches(file)
        
-        
+    if list_of_eo_patches == 0:
+        print('No patches found')
+        return
+    if random_choice == True:
+        eo_patch_filename = random.choice(list_of_eo_patches)
+    else:
+        if patch_id < len(list_of_eo_patches):
+            eo_patch_filename = list_of_eo_patches[patch_id]
+        else:
+            print('Index out of range')
+            return
+    final_eopatch_filepath = file+eo_patch_filename
+    print('Loaded from', final_eopatch_filepath)
+    return EOPatch.load(final_eopatch_filepath)    
     
