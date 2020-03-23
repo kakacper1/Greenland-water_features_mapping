@@ -87,6 +87,13 @@ def plot_single_mask_LANDSAT_8(eopatch, data_acces_name='LANDSAT_RAW_BANDS', ban
     del eopatch
     return
 
+def plot_two_pictures_on_top_of_each_other(background_picture , mask, alpha):
+    
+    plt.figure(figsize=(10, 10))
+    plt.imshow(background_picture.squeeze(), interpolation='none')
+    plt.imshow(mask.squeeze(), 'jet', interpolation='none', alpha=alpha)
+    plt.show()
+
 #def plot_qa_mask_LANDSAT_8(eopatch, band_idx, mask_acces_name='LANDSAT_QA_LAYERS', datetime_idx =0, dilation=0 ):
 #    fig = plt.figure(figsize=(10, 10)) 
 #    print(eopatch.timestamp[datetime_idx])
