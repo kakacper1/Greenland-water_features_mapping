@@ -17,4 +17,4 @@ All the code was included in Jupyter Notebooks and primarly divided into 5 parts
 Inside each folder notebooks were numbered accordingly to the flow of usage.
 Each notebook has its own purpose and shows it is commented in details
 
-Below all the sections were described in details. 
+Below all the sections were described in details (in progress). 
